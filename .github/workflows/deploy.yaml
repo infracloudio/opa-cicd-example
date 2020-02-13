@@ -58,10 +58,10 @@ jobs:
     - name: Evaluate standards with OPA
       uses: docker://openpolicyagent/opa:0.17.1
       args:
-      - "eval",
-      - "--input", "main/nginx/deployment.yaml",
-      - "--data", "standards/kubernetes/admission/standards.rego",
-      - "--format", "pretty"
+      - "eval"
+      - "--input=main/nginx/deployment.yaml"
+      - "--data=standards/kubernetes/admission/standards.rego"
+      - "--format=pretty"
     # Setup gcloud CLI
     - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
       with:
