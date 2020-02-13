@@ -60,11 +60,11 @@ jobs:
         curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64
         chmod u+x ./opa
         ls -lrth
-        result=`opa eval -d denyresourcelimits.rego  -i cpq.yaml data.kubernetes.admission.deny --format=pretty`
+        result=`./opa eval -d standards/policies/kubernetes/admission/standards.rego -i main/nginx/deployment.yaml data.kubernetes.admission.deny --format=pretty`
         echo "OPA eval returned : $result"
         if [ "$result" == "true" ]; then
-           echo "One or more policies are violated."
-           exit 1
+          echo "One or more policies are"
+          exit 1
         fi
     # Setup gcloud CLI
     - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
