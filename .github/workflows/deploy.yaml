@@ -45,6 +45,20 @@ jobs:
 
     - name: Checkout
       uses: actions/checkout@master
+      with:
+        path: main
+    
+    - name: Checkout standards repo
+      uses: actions/checkout@master
+      with:
+        repository: gchaware/opa-cicd-example-standards
+        path: standards
+    
+    #opa evaluate
+    - name: Evaluate standards with OPA
+      uses: docker://openpolicyagent/opa:0.17.1
+      run: |
+        opa eval -d standards/kubernetes/admission/standards.rego -i main/nginx/deployment.yaml data.kubernetes.admission.deny --format=pretty 
 
     # Setup gcloud CLI
     - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
@@ -61,7 +75,7 @@ jobs:
       run: |
         docker build -t gcr.io/$GKE_PROJECT/$IMAGE:$GITHUB_SHA \
           --build-arg GITHUB_SHA="$GITHUB_SHA" \
-          --build-arg GITHUB_REF="$GITHUB_REF" ./nginx
+          --build-arg GITHUB_REF="$GITHUB_REF" .main/nginx
     # Push the Docker image to Google Container Registry
     - name: Publish
       run: |
