@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: gchaware/nginx-example:1.0
+        image: gcr.io/opa-example/nginx-example:TAG
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
