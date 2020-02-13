@@ -9,4 +9,5 @@ spec:
   - port: 80
     targetPort: 80
     name: nginx-http
-  type: NodePort
+  type: LoadBalancer
+  loadBalancerIP: 34.93.93.14
