@@ -26,6 +26,10 @@
 name: Build and Deploy to GKE
 
 on:
+  pull_request_review_comment:
+    types: [created]
+    branches:
+    - master
   push:
     branches:
     - master
@@ -44,12 +48,12 @@ jobs:
     steps:
 
     - name: Checkout
-      uses: actions/checkout@master
+      uses: actions/checkout@v2
       with:
         path: main
     
     - name: Checkout standards repo
-      uses: actions/checkout@master
+      uses: actions/checkout@v2
       with:
         repository: gchaware/opa-cicd-example-standards
         path: standards
@@ -62,8 +66,8 @@ jobs:
         ls -lrth
         result=`./opa eval -d standards/policies/kubernetes/admission/standards.rego -i main/nginx/deployment.yaml data.kubernetes.admission.deny --format=pretty`
         echo "OPA eval returned : $result"
-        if [ "$result" == "true" ]; then
-          echo "One or more policies are"
+        if [ "$result" != "[]" ]; then
+          echo "One or more policies are violated. $result"
           exit 1
         fi
     # Setup gcloud CLI
@@ -93,10 +97,11 @@ jobs:
         chmod u+x ./kustomize
     # Deploy the Docker image to the GKE cluster
     - name: Deploy
-      run: |
-        gcloud container clusters get-credentials $GKE_CLUSTER \
-          --zone $GKE_ZONE --project $GKE_PROJECT
-        cd main
-        ../kustomize edit set image gcr.io/GKE_PROJECT/IMAGE:TAG=gcr.io/$GKE_PROJECT/$IMAGE:$GITHUB_SHA
-        ../kustomize build . | kubectl apply -f -
-        kubectl rollout status deployment/nginx
+      run: echo $GITHUB_EVENT_NAME
+      #run: |
+      #  gcloud container clusters get-credentials $GKE_CLUSTER \
+      #    --zone $GKE_ZONE --project $GKE_PROJECT
+      #  cd main
+      #  ../kustomize edit set image gcr.io/GKE_PROJECT/IMAGE:TAG=gcr.io/$GKE_PROJECT/$IMAGE:$GITHUB_SHA
+      #  ../kustomize build . | kubectl apply -f -
+      #  kubectl rollout status deployment/nginx
