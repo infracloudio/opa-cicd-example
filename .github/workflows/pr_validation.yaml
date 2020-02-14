@@ -32,6 +32,7 @@ on:
 # Environment variables available to all jobs and steps in this workflow
 env:
   IMAGE: nginx
+  GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
 
 jobs:
   check-event:
