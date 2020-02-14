@@ -26,7 +26,7 @@
 name: Build and Deploy to GKE
 
 on:
-  pull_request_review_comment:
+  issue_comment:
     types: [created]
 
 # Environment variables available to all jobs and steps in this workflow
@@ -34,7 +34,15 @@ env:
   IMAGE: nginx
 
 jobs:
+  Check Event:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute for pull request comments only
+        if: github.event.issue.pull_request 
+        run: echo "This is a pull request comment event"  
   setup-build-publish-deploy:
+    needs: [Check Event]
+    if: success()
     name: Setup, Validate, Build
     runs-on: ubuntu-latest
     steps:
