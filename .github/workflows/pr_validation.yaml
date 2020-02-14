@@ -34,14 +34,14 @@ env:
   IMAGE: nginx
 
 jobs:
-  Check Event:
+  check-event:
     runs-on: ubuntu-latest
     steps:
       - name: Execute for pull request comments only
         if: github.event.issue.pull_request 
         run: echo "This is a pull request comment event"  
   setup-build-publish-deploy:
-    needs: [Check Event]
+    needs: [check-event]
     if: success()
     name: Setup, Validate, Build
     runs-on: ubuntu-latest
