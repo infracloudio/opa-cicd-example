@@ -26,24 +26,17 @@
 name: Build and Deploy to GKE
 
 on:
-  issue_comment:
-    types: [created]
+  pull_request:
+    branches: 
+    - master
 
 # Environment variables available to all jobs and steps in this workflow
 env:
   IMAGE: nginx
   GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
 
-jobs:
-  check-event:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Execute for pull request comments only
-        if: github.event.issue.pull_request 
-        run: echo "This is a pull request comment event"  
+jobs: 
   setup-build-publish-deploy:
-    needs: [check-event]
-    if: success()
     name: Setup, Validate, Build
     runs-on: ubuntu-latest
     steps:
@@ -52,6 +45,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         path: main
+        ref: ${{ github.event.pull_request.head.sha }}
     
     - name: Checkout standards repo
       uses: actions/checkout@v2
